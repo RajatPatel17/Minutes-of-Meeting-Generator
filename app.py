@@ -77,7 +77,7 @@ if st.button('Generate'):
               * Add 2-3 Line of summary
             <Instructions>
             * Use Bullet Points and highlight  the import keywords by making them bold.
-            * Generate the output in docx format
+            * Generate the output in such a way it can be copied and pasted to MS Word format
             '''
         response = model.generate_content(prompt)
         st.write(response.text)
