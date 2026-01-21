@@ -10,7 +10,7 @@ from pdfextractor import text_extractor
 import streamlit as st
 
 # Lets configure Gemini key
-gemini_key = os.getenv('Google_API_KEY1')
+gemini_key = os.getenv('Google3_API_KEY1')
 genai.configure(api_key=gemini_key)
 model = genai.GenerativeModel('gemini-2.5-flash-lite',generation_config={'temperature':0.9})
 
@@ -20,20 +20,27 @@ model = genai.GenerativeModel('gemini-2.5-flash-lite',generation_config={'temper
 
 st.sidebar.title(':red[Upload Your Notes:]')
 st.sidebar.subheader(':blue[Only Upload Images,PDFs and Docx]')
-user_file = st.sidebar.file_uploader('Upload Here: ',type=['pdf','docx','png','jpg','jpeg','jfif'])
+user_file = st.sidebar.file_uploader('Upload Here: ',type=['pdf','docx','png','jpg','jpeg','jfif','heif','heic'])
 
 
 if user_file:
     st.sidebar.success('File Uploaded Successfully')
-    text=''
-    if user_file.type == 'application/pdf':
+    
+   
+    file_extension = user_file.name.split('.')[-1].lower()
+    
+    if file_extension == 'pdf':
         user_text = text_extractor(user_file)
-    elif user_file.type in ['image/png','image/jpg','image/jpeg','image/jfif']:
+        
+    elif file_extension in ['png', 'jpg', 'jpeg', 'jfif', 'heif', 'heic']:
         user_text = extract_text_image(user_file) 
-    elif user_file.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        
+    elif file_extension == 'docx':
         user_text = doc_text_extract(user_file)
+        
     else:
         st.sidebar.error('Enter the Correct file type')
+
 
 
 
@@ -47,7 +54,7 @@ Follow These Steps:-
 2. Click 'Generate to get MOM.
 ''')
 
-r=''
+r='Text_Format File'
 
 
 if st.button('Generate'):
@@ -76,5 +83,5 @@ if st.button('Generate'):
         st.write(response.text)
         r = response.text
 
-        if st.download_button(label='DOWNLOAD',data=response.text,file_name='mom_generated.txt',mime='text/plain'):
+    if st.download_button(label='DOWNLOAD',data=response.text,file_name='mom_generated.txt',mime='text/plain'):
             st.success(f'Your file is Downloaded------------> {r}')

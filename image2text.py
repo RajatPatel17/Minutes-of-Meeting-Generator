@@ -3,12 +3,14 @@ import cv2
 import numpy as np
 from PIL import Image
 import os
+from pillow_heif import register_heif_opener
 
 def extract_text_image(image_path):
-    file_bytes = np.asarray(bytearray(image_path.read()), dtype=np.uint8)
-    image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-    # lets Load and Process the image
-    #image = cv2.imread(image) # Load the image
+    register_heif_opener()
+    with Image.open(image_path) as img:
+        image = np.array(img.convert("RGB"))
+        # Since CV2 expects BGR, we flip the channels back if needed
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # To convert BGR to RGB
     image_grey = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) # To convert BGR to Grey
     _,image_bw = cv2.threshold(image_grey,150,255,cv2.THRESH_BINARY) # B&W conversion
@@ -17,7 +19,7 @@ def extract_text_image(image_path):
     final_image = Image.fromarray(image_bw) 
 
     # Configure genai Model
-    key = os.getenv("Google_API_KEY1")
+    key = os.getenv("Google3_API_KEY1")
     genai.configure(api_key=key)
     model = genai.GenerativeModel('gemini-2.5-flash-lite')
 

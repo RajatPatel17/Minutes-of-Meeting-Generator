@@ -4,3 +4,4 @@ pypdf
 opencv-python-headless
 python-docx
 pillow
+pillow_heif
